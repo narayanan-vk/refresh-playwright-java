@@ -1,56 +1,31 @@
 package com.neudesic.qa;
 
 import com.microsoft.playwright.*;
+import com.microsoft.playwright.junit.Options;
+import com.microsoft.playwright.junit.OptionsFactory;
+import com.microsoft.playwright.junit.UsePlaywright;
 import com.microsoft.playwright.options.AriaRole;
 import org.junit.jupiter.api.*;
 
-import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
+@UsePlaywright(AppTest.CustomOptions.class)
 public class AppTest {
-    static Playwright playwright;
-    static Browser browser;
 
-    BrowserContext context;
-    Page page;
-
-    @BeforeAll
-    static void launchBrowser() {
-        playwright = Playwright.create();
-        browser = playwright.chromium().launch();
-    }
-
-    @AfterAll
-    static void closeBrowser() {
-        playwright.close();
-    }
-
-    @BeforeEach
-    void createContextAndPage() {
-        context = browser.newContext();
-        context.tracing().start(new Tracing.StartOptions()
-                .setScreenshots(true)
-                .setSnapshots(true)
-                .setSources(true));
-        page = context.newPage();
-        page.navigate("https://demo.playwright.dev/todomvc/#/");
-    }
-
-    @AfterEach
-    void closeContext() {
-
-        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-        String fileName = "test-output/trace" + timestamp + ".zip";
-        context.tracing().stop(new Tracing.StopOptions()
-                .setPath(Paths.get(fileName)));
-        context.close();
+    public static class CustomOptions implements OptionsFactory {
+        @Override
+        public Options getOptions() {
+            return new Options()
+                    .setHeadless(false)
+                    .setContextOptions(new Browser.NewContextOptions()
+                            .setBaseURL("https://demo.playwright.dev")).setTrace(Options.Trace.ON);
+        }
     }
 
     @Test
-    void shouldCheckAddTodo() {
+    void shouldCheckAddTodo(Page page) {
+//        page.navigate("https://demo.playwright.dev/todomvc/#/");
+        page.navigate("/todomvc/#/");
         page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("What needs to be done?")).click();
         page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("What needs to be done?")).fill("Check if this todo is added");
         page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("What needs to be done?")).press("Enter");
@@ -59,7 +34,9 @@ public class AppTest {
     }
 
     @Test
-    void shouldCheckDeleteTodo() {
+    void shouldCheckDeleteTodo(Page page) {
+//        page.navigate("https://demo.playwright.dev/todomvc/#/");
+        page.navigate("/todomvc/#/");
         page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("What needs to be done?")).click();
         page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("What needs to be done?")).fill("Check if todo is created then deleted");
         page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("What needs to be done?")).press("Enter");
