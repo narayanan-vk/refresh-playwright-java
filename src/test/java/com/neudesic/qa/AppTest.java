@@ -16,7 +16,7 @@ public class AppTest {
         @Override
         public Options getOptions() {
             return new Options()
-                    .setHeadless(false)
+                    .setHeadless(true)
                     .setContextOptions(new Browser.NewContextOptions()
                             .setBaseURL("https://demo.playwright.dev")).setTrace(Options.Trace.ON);
         }
