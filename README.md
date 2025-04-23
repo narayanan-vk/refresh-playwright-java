@@ -1,6 +1,6 @@
 # refresh-playwright-java
 
-[![Playwright Tests](https://github.com/narayanan-vk/refresh-playwright-java/actions/workflows/playwright.yml/badge.svg)](https://github.com/narayanan-vk/refresh-playwright-java/actions/workflows/playwright.yml)
+[![Playwright Tests](https://github.com/narayanan-vk/refresh-playwright-java/actions/workflows/playwright.yml/badge.svg?branch=main)](https://github.com/narayanan-vk/refresh-playwright-java/actions/workflows/playwright.yml)
 
 ## View trace
 
