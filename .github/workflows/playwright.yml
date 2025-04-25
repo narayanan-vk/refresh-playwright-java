@@ -44,14 +44,14 @@ jobs:
         if: always()
       - name: Upload Allure Results
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: allure-results
           path: target/allure-results/
           retention-days: 30
       - name: Upload Allure Report
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: allure-report
           path: target/site/allure-maven-plugin/
