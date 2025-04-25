@@ -1,5 +1,9 @@
 name: Playwright Tests
 on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
   workflow_dispatch:
     inputs:
       browser:
@@ -13,7 +17,7 @@ on:
         required: true
         default: 'UI'
         type: choice
-        options: [Smoke, Regression, API, Performance, P1, P2]
+        options: [UI, Smoke, Regression, API, Performance, P1, P2]
 jobs:
   playwright:
     name: 'Playwright Tests'
@@ -35,3 +39,20 @@ jobs:
           TEST_BROWSER: ${{ github.event.inputs.browser }}
           TEST_HEADLESS: "true"
           TEST_TAGS: ${{ github.event.inputs.tags }}
+      - name: Generate Allure Report
+        run: mvn allure:report
+        if: always()
+      - name: Upload Allure Results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: allure-results
+          path: target/allure-results/
+          retention-days: 30
+      - name: Upload Allure Report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: allure-report
+          path: target/site/allure-maven-plugin/
+          retention-days: 30
