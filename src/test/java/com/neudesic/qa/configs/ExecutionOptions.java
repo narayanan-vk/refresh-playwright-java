@@ -10,7 +10,7 @@ public class ExecutionOptions{
         @Override
         public Options getOptions() {
             return new Options()
-//                    .setWsEndpoint("ws://0.0.0.0:3000/")
+                    .setWsEndpoint(ConfigManager.getServer())
                     .setHeadless(ConfigManager.isHeadless())
                     .setBrowserName(ConfigManager.getBrowser())
                     .setContextOptions(new Browser.NewContextOptions().setBaseURL(ConfigManager.getBaseUrl()))

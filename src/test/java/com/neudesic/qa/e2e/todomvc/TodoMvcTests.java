@@ -4,6 +4,9 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 import com.neudesic.qa.configs.BaseTest;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
 import org.junit.jupiter.api.*;
 
 import java.util.List;
@@ -74,10 +77,14 @@ public class TodoMvcTests extends BaseTest {
         page.navigate(TODO_MVC_URL);
     }
 
+    @Epic("Todo MVC UI")
+    @Feature("TODO Operations")
+    @Story("New TODO")
     @Nested
     @Tag("NewTodo")
     class NewTodoTests {
 
+        @DisplayName("Should allow adding TODO items")
         @Test
         @Tag("P1")
         @Tag("Smoke")
@@ -133,6 +140,9 @@ public class TodoMvcTests extends BaseTest {
         }
     }
 
+    @Epic("Todo MVC UI")
+    @Feature("TODO Operations")
+    @Story("Completed TODO")
     @Nested
     @Tag("MarkAll")
     class MarkAllAsCompletedTests {
@@ -207,6 +217,9 @@ public class TodoMvcTests extends BaseTest {
         }
     }
 
+    @Epic("Todo MVC UI")
+    @Feature("TODO Operations")
+    @Story("TODO Items")
     @Nested
     @Tag("Item")
     class ItemTests {
@@ -286,6 +299,9 @@ public class TodoMvcTests extends BaseTest {
         }
     }
 
+    @Epic("Todo MVC UI")
+    @Feature("TODO Operations")
+    @Story("Edit TODO")
     @Nested
     @Tag("Editing")
     class EditingTests {
@@ -375,6 +391,9 @@ public class TodoMvcTests extends BaseTest {
         }
     }
 
+    @Epic("Todo MVC UI")
+    @Feature("TODO Operations")
+    @Story("TODO Counter")
     @Nested
     @Tag("Counter")
     class CounterTests {
@@ -399,6 +418,9 @@ public class TodoMvcTests extends BaseTest {
         }
     }
 
+    @Epic("Todo MVC UI")
+    @Feature("TODO Operations")
+    @Story("Completed TODO")
     @Nested
     @Tag("ClearCompleted")
     class ClearCompletedButtonTests {
@@ -452,6 +474,9 @@ public class TodoMvcTests extends BaseTest {
         }
     }
 
+    @Epic("Todo MVC UI")
+    @Feature("TODO Operations")
+    @Story("Retain TODO")
     @Nested
     @Tag("Persistence")
     class PersistenceTests {
@@ -495,6 +520,9 @@ public class TodoMvcTests extends BaseTest {
         }
     }
 
+    @Epic("Todo MVC UI")
+    @Feature("TODO Operations")
+    @Story("Routing")
     @Nested
     @Tag("Routing")
     class RoutingTests {

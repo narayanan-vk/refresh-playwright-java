@@ -4,6 +4,9 @@ import com.microsoft.playwright.*;
 import com.microsoft.playwright.junit.UsePlaywright;
 import com.microsoft.playwright.options.AriaRole;
 import com.neudesic.qa.configs.ExecutionOptions;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -12,6 +15,9 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 @UsePlaywright(ExecutionOptions.CustomOptions.class)
 public class AppTest {
 
+    @Epic("Todo MVC UI")
+    @Feature("TODO POC")
+    @Story("Add TODO")
     @Tag("UI")
     @Tag("P1")
     @Tag("Smoke")
@@ -25,6 +31,10 @@ public class AppTest {
         assertThat(page.getByTestId("todo-title")).containsText("Check if this todo is added");
         assertThat(page.getByTestId("todo-title")).matchesAriaSnapshot("- text: Check if this todo is added");
     }
+
+    @Epic("Todo MVC UI")
+    @Feature("TODO POC")
+    @Story("Delete TODO")
     @Tag("UI")
     @Tag("P1")
     @Tag("Smoke")

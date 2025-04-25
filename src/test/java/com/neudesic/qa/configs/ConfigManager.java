@@ -23,12 +23,12 @@ public class ConfigManager {
         return getString("test.browser");
     }
 
-    public static boolean isHeadless() {
-        return getBoolean("test.headless");
+    public static String getServer() {
+        return getString("test.server");
     }
 
-    public static String getTags() {
-        return getString("test.tags");
+    public static boolean isHeadless() {
+        return getBoolean("test.headless");
     }
 
     public static String getBaseUrl() {
