@@ -1,9 +1,19 @@
 name: Playwright Tests
 on:
-  push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
+  workflow_dispatch:
+    inputs:
+      browser:
+        description: 'Browser to run tests on'
+        required: true
+        default: 'chromium'
+        type: choice
+        options: [chromium, firefox, webkit]
+      tags:
+        description: 'Test tags to run'
+        required: true
+        default: 'UI'
+        type: choice
+        options: [Smoke, Regression, API, Performance, P1, P2]
 jobs:
   playwright:
     name: 'Playwright Tests'
@@ -20,4 +30,8 @@ jobs:
       - name: Build & Install
         run: mvn -B install -D skipTests --no-transfer-progress
       - name: Run tests
-        run: mvn test
+        run: mvn test -Dgroups="${TEST_TAGS}"
+        env:
+          TEST_BROWSER: ${{ github.event.inputs.browser }}
+          TEST_HEADLESS: "true"
+          TEST_TAGS: ${{ github.event.inputs.tags }}
