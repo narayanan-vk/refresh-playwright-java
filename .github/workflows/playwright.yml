@@ -18,6 +18,12 @@ on:
         default: 'UI'
         type: choice
         options: [UI, Smoke, Regression, API, Performance, P1, P2]
+      trace:
+        description: 'Recording a trace'
+        required: true
+        default: 'RETAIN_ON_FAILURE'
+        type: choice
+        options: [ ON, OFF, RETAIN_ON_FAILURE ]
 jobs:
   playwright:
     name: 'Playwright Tests'
@@ -38,7 +44,9 @@ jobs:
         env:
           TEST_BROWSER: ${{ github.event.inputs.browser }}
           TEST_HEADLESS: "true"
+          TEST_CI: "true"
           TEST_TAGS: ${{ github.event.inputs.tags }}
+          TEST_TRACE: ${{ github.event.inputs.trace }}
       - name: Generate Allure Report
         run: mvn allure:report
         if: always()

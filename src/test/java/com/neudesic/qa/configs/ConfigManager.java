@@ -31,6 +31,10 @@ public class ConfigManager {
         return getBoolean("test.headless");
     }
 
+    public static boolean isCi() {
+        return getBoolean("test.ci");
+    }
+
     public static String getBaseUrl() {
         return getString("test.baseUrl");
     }
