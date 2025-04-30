@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: allure-results-pvc
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: allure-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: allure-server
+  template:
+    metadata:
+      labels:
+        app: allure-server
+    spec:
+      containers:
+        - name: allure
+          image: frankescobar/allure-docker-service:latest
+          ports:
+            - containerPort: 5050
+              name: allure-api
+            - containerPort: 5252
+              name: allure-ui
+          env:
+            - name: CHECK_RESULTS_EVERY_SECONDS
+              value: "10"
+            - name: KEEP_HISTORY
+              value: "true"
+            - name: DEFAULT_PROJECT_ID
+              value: "playwright-tests"
+          volumeMounts:
+            - name: allure-results
+              mountPath: /app/projects
+      volumes:
+        - name: allure-results
+          persistentVolumeClaim:
+            claimName: allure-results-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: allure-server
+spec:
+  selector:
+    app: allure-server
+  ports:
+    - name: allure-api
+      port: 5050
+      targetPort: 5050
+    - name: allure-ui
+      port: 5252
+      targetPort: 5252
+  type: LoadBalancer

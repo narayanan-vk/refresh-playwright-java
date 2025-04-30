@@ -46,15 +46,15 @@ public class TodoMvcTests extends BaseTest {
     }
 
     private Locator newTodoInput() {
-        return page.getByPlaceholder("What needs to be done?");
+        return getPage().getByPlaceholder("What needs to be done?");
     }
 
     private Locator todoItems() {
-        return page.getByTestId("todo-item");
+        return getPage().getByTestId("todo-item");
     }
 
     private Locator todoCount() {
-        return page.getByTestId("todo-count");
+        return getPage().getByTestId("todo-count");
     }
 
     // Note: The original TS 'waitForFunction' waits until the condition is true.
@@ -64,17 +64,17 @@ public class TodoMvcTests extends BaseTest {
     // However, for many operations, checking immediately after the action is sufficient.
 
     private Locator clearCompletedButton() {
-        return page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Clear completed"));
+        return getPage().getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Clear completed"));
     }
 
     private Locator toggleAllCheckbox() {
-        return page.getByLabel("Mark all as complete");
+        return getPage().getByLabel("Mark all as complete");
     }
 
 
     @BeforeEach
     void navigateToApp() {
-        page.navigate(TODO_MVC_URL);
+        getPage().navigate(TODO_MVC_URL);
     }
 
     @Epic("Todo MVC UI")
@@ -105,7 +105,7 @@ public class TodoMvcTests extends BaseTest {
             assertThat(todoItems()).hasCount(2);
             assertThat(todoItems()).hasText(new String[]{TODO_ITEMS.get(0), TODO_ITEMS.get(1)});
 
-            checkNumberOfTodosInLocalStorage(page, 2);
+            checkNumberOfTodosInLocalStorage(getPage(), 2);
         }
 
         @Test
@@ -118,7 +118,7 @@ public class TodoMvcTests extends BaseTest {
 
             // Check that input is empty
             assertThat(newTodoInput()).isEmpty();
-            checkNumberOfTodosInLocalStorage(page, 1);
+            checkNumberOfTodosInLocalStorage(getPage(), 1);
         }
 
         @Test
@@ -126,17 +126,17 @@ public class TodoMvcTests extends BaseTest {
         @Tag("Regression")
         void shouldAppendNewItemsToBottom() {
             // Create 3 items
-            createDefaultTodos(page);
+            createDefaultTodos(getPage());
 
             // Check count display using different methods
-            assertThat(page.getByText("3 items left")).isVisible();
+            assertThat(getPage().getByText("3 items left")).isVisible();
             assertThat(todoCount()).hasText("3 items left");
             assertThat(todoCount()).containsText("3");
             assertThat(todoCount()).hasText(Pattern.compile("3 items left")); // Regex example
 
             // Check all items in one call.
             assertThat(todoItems()).hasText(TODO_ITEMS.toArray(new String[0]));
-            checkNumberOfTodosInLocalStorage(page, 3);
+            checkNumberOfTodosInLocalStorage(getPage(), 3);
         }
     }
 
@@ -149,15 +149,15 @@ public class TodoMvcTests extends BaseTest {
 
         @BeforeEach
         void setupTodos() {
-            createDefaultTodos(page);
-            checkNumberOfTodosInLocalStorage(page, 3);
+            createDefaultTodos(getPage());
+            checkNumberOfTodosInLocalStorage(getPage(), 3);
         }
 
         @AfterEach
         void checkLocalStorageAfter() {
             // This check ensures tests within this suite don't accidentally delete items
             // Adjust if a test is *supposed* to change the total count by the end.
-            checkNumberOfTodosInLocalStorage(page, 3);
+            checkNumberOfTodosInLocalStorage(getPage(), 3);
         }
 
 //        @Test
@@ -174,7 +174,7 @@ public class TodoMvcTests extends BaseTest {
 //                    assertThat(item).hasClass("completed")
 //            );
 //
-//            checkNumberOfCompletedTodosInLocalStorage(page, 3);
+//            checkNumberOfCompletedTodosInLocalStorage(getPage(), 3);
 //        }
 //
 //        @Test
@@ -199,7 +199,7 @@ public class TodoMvcTests extends BaseTest {
         void completeAllCheckboxShouldUpdateState() {
             toggleAllCheckbox().check();
             assertThat(toggleAllCheckbox()).isChecked();
-            checkNumberOfCompletedTodosInLocalStorage(page, 3);
+            checkNumberOfCompletedTodosInLocalStorage(getPage(), 3);
 
             // Uncheck first todo
             Locator firstTodo = todoItems().nth(0);
@@ -210,7 +210,7 @@ public class TodoMvcTests extends BaseTest {
 
             // Check first todo again
             firstTodo.getByRole(AriaRole.CHECKBOX).check();
-            checkNumberOfCompletedTodosInLocalStorage(page, 3);
+            checkNumberOfCompletedTodosInLocalStorage(getPage(), 3);
 
             // Assert the toggle all is checked again.
             assertThat(toggleAllCheckbox()).isChecked();
@@ -248,7 +248,7 @@ public class TodoMvcTests extends BaseTest {
             // Assert both are completed
             assertThat(firstTodo).hasClass("completed");
             assertThat(secondTodo).hasClass("completed");
-            checkNumberOfCompletedTodosInLocalStorage(page, 2); // Added check
+            checkNumberOfCompletedTodosInLocalStorage(getPage(), 2); // Added check
         }
 
         @Test
@@ -269,20 +269,20 @@ public class TodoMvcTests extends BaseTest {
             firstTodoCheckbox.check();
             assertThat(firstTodo).hasClass("completed");
             assertThat(secondTodo).not().hasClass("completed");
-            checkNumberOfCompletedTodosInLocalStorage(page, 1);
+            checkNumberOfCompletedTodosInLocalStorage(getPage(), 1);
 
             // Uncheck first item
             firstTodoCheckbox.uncheck();
             assertThat(firstTodo).not().hasClass("completed");
             assertThat(secondTodo).not().hasClass("completed");
-            checkNumberOfCompletedTodosInLocalStorage(page, 0);
+            checkNumberOfCompletedTodosInLocalStorage(getPage(), 0);
         }
 
         @Test
         @Tag("P1")
         @Tag("Regression")
         void shouldAllowEditingAnItem() {
-            createDefaultTodos(page);
+            createDefaultTodos(getPage());
 
             Locator secondTodo = todoItems().nth(1);
             secondTodo.dblclick();
@@ -295,7 +295,7 @@ public class TodoMvcTests extends BaseTest {
 
             // Explicitly assert the new text value
             assertThat(todoItems()).hasText(new String[]{TODO_ITEMS.get(0), "buy some sausages", TODO_ITEMS.get(2)});
-            checkTodosInLocalStorage(page, "buy some sausages");
+            checkTodosInLocalStorage(getPage(), "buy some sausages");
         }
     }
 
@@ -308,8 +308,8 @@ public class TodoMvcTests extends BaseTest {
 
         @BeforeEach
         void setupTodos() {
-            createDefaultTodos(page);
-            checkNumberOfTodosInLocalStorage(page, 3);
+            createDefaultTodos(getPage());
+            checkNumberOfTodosInLocalStorage(getPage(), 3);
         }
 
         @Test
@@ -323,7 +323,7 @@ public class TodoMvcTests extends BaseTest {
             // Use hasText option within locator
             assertThat(todoItem.locator("label", new Locator.LocatorOptions().setHasText(TODO_ITEMS.get(1)))).not().isVisible();
 
-            checkNumberOfTodosInLocalStorage(page, 3); // Verify count hasn't changed
+            checkNumberOfTodosInLocalStorage(getPage(), 3); // Verify count hasn't changed
         }
 
         @Test
@@ -338,7 +338,7 @@ public class TodoMvcTests extends BaseTest {
             editInput.dispatchEvent("blur"); // Trigger blur
 
             assertThat(todoItems()).hasText(new String[]{TODO_ITEMS.get(0), "buy some sausages", TODO_ITEMS.get(2)});
-            checkTodosInLocalStorage(page, "buy some sausages");
+            checkTodosInLocalStorage(getPage(), "buy some sausages");
         }
 
         @Test
@@ -354,7 +354,7 @@ public class TodoMvcTests extends BaseTest {
 
             assertThat(todoItems()).hasText(new String[]{TODO_ITEMS.get(0), "buy some sausages", // Expect trimmed text
                     TODO_ITEMS.get(2)});
-            checkTodosInLocalStorage(page, "buy some sausages");
+            checkTodosInLocalStorage(getPage(), "buy some sausages");
         }
 
         @Test
@@ -370,7 +370,7 @@ public class TodoMvcTests extends BaseTest {
 
             assertThat(todoItems()).hasCount(2);
             assertThat(todoItems()).hasText(new String[]{TODO_ITEMS.get(0), TODO_ITEMS.get(2)});
-            checkNumberOfTodosInLocalStorage(page, 2); // Check local storage count
+            checkNumberOfTodosInLocalStorage(getPage(), 2); // Check local storage count
         }
 
         @Test
@@ -386,8 +386,8 @@ public class TodoMvcTests extends BaseTest {
 
             // Should revert to original list
             assertThat(todoItems()).hasText(TODO_ITEMS.toArray(new String[0]));
-            checkNumberOfTodosInLocalStorage(page, 3); // Count should be unchanged
-            checkTodosInLocalStorage(page, TODO_ITEMS.get(1)); // Original item should still be there
+            checkNumberOfTodosInLocalStorage(getPage(), 3); // Count should be unchanged
+            checkTodosInLocalStorage(getPage(), TODO_ITEMS.get(1)); // Original item should still be there
         }
     }
 
@@ -414,7 +414,7 @@ public class TodoMvcTests extends BaseTest {
             assertThat(todoCount()).containsText("2");
             assertThat(todoCount()).hasText(Pattern.compile("2 items left"));
 
-            checkNumberOfTodosInLocalStorage(page, 2);
+            checkNumberOfTodosInLocalStorage(getPage(), 2);
         }
     }
 
@@ -427,7 +427,7 @@ public class TodoMvcTests extends BaseTest {
 
         @BeforeEach
         void setupTodos() {
-            createDefaultTodos(page);
+            createDefaultTodos(getPage());
         }
 
         @Test
@@ -447,14 +447,14 @@ public class TodoMvcTests extends BaseTest {
         void shouldRemoveCompletedItemsWhenClicked() {
             // Complete the middle item
             todoItems().nth(1).getByRole(AriaRole.CHECKBOX).check();
-            checkNumberOfCompletedTodosInLocalStorage(page, 1); // Pre-check
+            checkNumberOfCompletedTodosInLocalStorage(getPage(), 1); // Pre-check
 
             clearCompletedButton().click();
 
             assertThat(todoItems()).hasCount(2);
             assertThat(todoItems()).hasText(new String[]{TODO_ITEMS.get(0), TODO_ITEMS.get(2)});
-            checkNumberOfTodosInLocalStorage(page, 2); // Post-check total
-            checkNumberOfCompletedTodosInLocalStorage(page, 0); // Post-check completed
+            checkNumberOfTodosInLocalStorage(getPage(), 2); // Post-check total
+            checkNumberOfCompletedTodosInLocalStorage(getPage(), 0); // Post-check completed
         }
 
         @Test
@@ -501,10 +501,10 @@ public class TodoMvcTests extends BaseTest {
             assertThat(firstTodoCheckbox).isChecked();
             assertThat(todoItems().nth(0)).hasClass("completed");
             assertThat(todoItems().nth(1)).not().hasClass("completed");
-            checkNumberOfCompletedTodosInLocalStorage(page, 1);
+            checkNumberOfCompletedTodosInLocalStorage(getPage(), 1);
 
-            // Reload the page
-            page.reload();
+            // Reload the getPage()
+            getPage().reload();
 
             // Re-fetch locators after reload is recommended practice
             Locator firstTodoAfterReload = todoItems().nth(0);
@@ -515,8 +515,8 @@ public class TodoMvcTests extends BaseTest {
             assertThat(firstTodoCheckboxAfterReload).isChecked();
             assertThat(firstTodoAfterReload).hasClass("completed");
             assertThat(todoItems().nth(1)).not().hasClass("completed");
-            checkNumberOfCompletedTodosInLocalStorage(page, 1); // Also check local storage state
-            checkNumberOfTodosInLocalStorage(page, 2);
+            checkNumberOfCompletedTodosInLocalStorage(getPage(), 1); // Also check local storage state
+            checkNumberOfTodosInLocalStorage(getPage(), 2);
         }
     }
 
@@ -529,12 +529,12 @@ public class TodoMvcTests extends BaseTest {
 
         @BeforeEach
         void setupTodosAndWait() {
-            createDefaultTodos(page);
+            createDefaultTodos(getPage());
             // Ensure storage is updated before navigation potentially disrupts it
-            checkTodosInLocalStorage(page, TODO_ITEMS.get(0));
-            checkTodosInLocalStorage(page, TODO_ITEMS.get(1));
-            checkTodosInLocalStorage(page, TODO_ITEMS.get(2));
-            checkNumberOfTodosInLocalStorage(page, 3);
+            checkTodosInLocalStorage(getPage(), TODO_ITEMS.get(0));
+            checkTodosInLocalStorage(getPage(), TODO_ITEMS.get(1));
+            checkTodosInLocalStorage(getPage(), TODO_ITEMS.get(2));
+            checkNumberOfTodosInLocalStorage(getPage(), 3);
         }
 
         @Test
@@ -543,10 +543,10 @@ public class TodoMvcTests extends BaseTest {
         void shouldAllowDisplayingActiveItems() {
             // Complete the second item
             todoItems().nth(1).getByRole(AriaRole.CHECKBOX).check();
-            checkNumberOfCompletedTodosInLocalStorage(page, 1);
+            checkNumberOfCompletedTodosInLocalStorage(getPage(), 1);
 
             // Navigate to Active filter
-            page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Active")).click();
+            getPage().getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Active")).click();
 
             // Assert only active items are shown
             assertThat(todoItems()).hasCount(2);
@@ -558,11 +558,11 @@ public class TodoMvcTests extends BaseTest {
 //        void shouldRespectTheBackButton() {
 //            // Complete the second item
 //            todoItems().nth(1).getByRole(AriaRole.CHECKBOX).check();
-//            checkNumberOfCompletedTodosInLocalStorage(page, 1);
+//            checkNumberOfCompletedTodosInLocalStorage(getPage(), 1);
 //
-//            Locator linkAll = page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("All"));
-//            Locator linkActive = page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Active"));
-//            Locator linkCompleted = page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Completed"));
+//            Locator linkAll = getPage().getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("All"));
+//            Locator linkActive = getPage().getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Active"));
+//            Locator linkCompleted = getPage().getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Completed"));
 //
 //            // Navigate through filters
 //            // Start at All (default)
@@ -579,14 +579,14 @@ public class TodoMvcTests extends BaseTest {
 //
 //
 //            // Use back button
-//            page.goBack(); // Should go back to Active view
-//            assertThat(page.url()).endsWith("#/active"); // Ensure URL matches
+//            getPage().goBack(); // Should go back to Active view
+//            assertThat(getPage().url()).endsWith("#/active"); // Ensure URL matches
 //            assertThat(todoItems()).hasCount(2);
 //            assertThat(todoItems()).hasText(new String[]{TODO_ITEMS.get(0), TODO_ITEMS.get(2)});
 //
 //
-//            page.goBack(); // Should go back to All view
-//            assertThat(page.url()).endsWith("#/"); // Ensure URL matches
+//            getPage().goBack(); // Should go back to All view
+//            assertThat(getPage().url()).endsWith("#/"); // Ensure URL matches
 //            assertThat(todoItems()).hasCount(3);
 //            assertThat(todoItems()).hasText(TODO_ITEMS.toArray(new String[0]));
 //        }
@@ -598,10 +598,10 @@ public class TodoMvcTests extends BaseTest {
         void shouldAllowDisplayingCompletedItems() {
             // Complete the second item
             todoItems().nth(1).getByRole(AriaRole.CHECKBOX).check();
-            checkNumberOfCompletedTodosInLocalStorage(page, 1);
+            checkNumberOfCompletedTodosInLocalStorage(getPage(), 1);
 
             // Navigate to Completed filter
-            page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Completed")).click();
+            getPage().getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Completed")).click();
 
             // Assert only completed item is shown
             assertThat(todoItems()).hasCount(1);
@@ -614,16 +614,16 @@ public class TodoMvcTests extends BaseTest {
         void shouldAllowDisplayingAllItems() {
             // Complete the second item
             todoItems().nth(1).getByRole(AriaRole.CHECKBOX).check();
-            checkNumberOfCompletedTodosInLocalStorage(page, 1);
+            checkNumberOfCompletedTodosInLocalStorage(getPage(), 1);
 
             // Navigate away and back to All
-            page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Active")).click();
+            getPage().getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Active")).click();
             assertThat(todoItems()).hasCount(2); // Verify active view
 
-            page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Completed")).click();
+            getPage().getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Completed")).click();
             assertThat(todoItems()).hasCount(1); // Verify completed view
 
-            page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("All")).click();
+            getPage().getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("All")).click();
             assertThat(todoItems()).hasCount(3); // Verify All view shows all items
             assertThat(todoItems()).hasText(TODO_ITEMS.toArray(new String[0]));
         }
@@ -632,9 +632,9 @@ public class TodoMvcTests extends BaseTest {
         @Tag("P2")
         @Tag("Regression")
         void shouldHighlightCurrentlyAppliedFilter() {
-            Locator linkAll = page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("All"));
-            Locator linkActive = page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Active"));
-            Locator linkCompleted = page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Completed"));
+            Locator linkAll = getPage().getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("All"));
+            Locator linkActive = getPage().getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Active"));
+            Locator linkCompleted = getPage().getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Completed"));
 
             // Default: All should be selected
             assertThat(linkAll).hasClass("selected");

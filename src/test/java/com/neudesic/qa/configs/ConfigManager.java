@@ -12,7 +12,6 @@ public class ConfigManager {
         try {
             System.setProperty("config.resource", "application.conf");
             config = ConfigFactory.load();
-            System.out.println("Loaded configuration: " + config.getConfig("test"));
         } catch (Exception e) {
             System.err.println("Error loading configuration: " + e.getMessage());
             config = ConfigFactory.empty();

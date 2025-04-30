@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: reportportal-credentials
+  namespace: playwright-java
+type: Opaque
+stringData:
+  reportportal.properties: |
+    rp.endpoint=http://reportportal-service:8080
+    rp.api.key=
+    rp.project=playwright-java-junit
+    rp.enable=true
+    rp.description=Playwright tests execution in Kubernetes
+    rp.attributes=env:qa;type:automation

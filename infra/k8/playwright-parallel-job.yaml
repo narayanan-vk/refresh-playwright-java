@@ -1,0 +1,122 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: playwright-shard1
+  namespace: playwright-java
+spec:
+  template:
+    spec:
+      containers:
+        - name: playwright
+          image: localhost/playwright-tests:v2
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: SHARD_INDEX
+              value: "0"
+            - name: SHARD_TOTAL
+              value: "2"
+            - name: TEST_BROWSER
+              value: "chromium"
+            - name: TEST_TAGS
+              value: "UI"
+            - name: TEST_HEADLESS
+              value: "true"
+            - name: TEST_TRACE
+              value: "RETAIN_ON_FAILURE"
+            - name: TEST_CI
+              value: "true"
+          command: ["sh", "-c"]
+          args:
+            - |
+              # Create reportportal.properties file from secret
+              cp /etc/reportportal/reportportal.properties /app/src/test/resources/
+              echo "rp.launch=Playwright-Shard-${SHARD_INDEX}" >> /app/src/test/resources/reportportal.properties
+              
+              
+              echo "Running shard ${SHARD_INDEX}/${SHARD_TOTAL}"
+              mvn test -DshardIndex=${SHARD_INDEX} -DshardTotal=${SHARD_TOTAL} -Dgroups="${TEST_TAGS}"
+              
+              # Copy allure results to the shared volume with a unique directory name
+              # mkdir -p /allure-results/playwright-tests/results/shard-${SHARD_INDEX}
+              # cp -r /app/target/allure-results/* /allure-results/playwright-tests/results/shard-${SHARD_INDEX}/
+          volumeMounts:
+            - name: reportportal-config
+              mountPath: /etc/reportportal
+      volumes:
+        - name: reportportal-config
+          secret:
+            secretName: reportportal-credentials
+      restartPolicy: Never
+---
+#apiVersion: batch/v1
+#kind: Job
+#metadata:
+#  name: playwright-shard2
+#  namespace: playwright-java
+#spec:
+#  template:
+#    spec:
+#      containers:
+#        - name: playwright
+#          image: localhost/playwright-tests:v2
+#          imagePullPolicy: IfNotPresent
+#          env:
+#            - name: SHARD_INDEX
+#              value: "1"
+#            - name: SHARD_TOTAL
+#              value: "2"
+#            - name: TEST_BROWSER
+#              value: "chromium"
+#            - name: TEST_TAGS
+#              value: "UI"
+#            - name: TEST_HEADLESS
+#              value: "true"
+#            - name: TEST_TRACE
+#              value: "RETAIN_ON_FAILURE"
+#            - name: TEST_CI
+#              value: "true"
+#          command: ["sh", "-c"]
+#          args:
+#            - |
+#              # Create reportportal.properties file from secret
+#              cp /etc/reportportal/reportportal.properties /app/src/test/resources/
+#              echo "rp.launch=Playwright-Shard-${SHARD_INDEX}" >> /app/src/test/resources/reportportal.properties
+#
+#
+#              echo "Running shard ${SHARD_INDEX}/${SHARD_TOTAL}"
+#              mvn test -DshardIndex=${SHARD_INDEX} -DshardTotal=${SHARD_TOTAL} -Dgroups="${TEST_TAGS}"
+#
+#              # Copy allure results to the shared volume with a unique directory name
+#              # mkdir -p /allure-results/playwright-tests/results/shard-${SHARD_INDEX}
+#              # cp -r /app/target/allure-results/* /allure-results/playwright-tests/results/shard-${SHARD_INDEX}/
+#          volumeMounts:
+#            - name: reportportal-config
+#              mountPath: /etc/reportportal
+#      volumes:
+#        - name: reportportal-config
+#          secret:
+#            secretName: reportportal-credentials
+#      restartPolicy: Never
+#---
+#apiVersion: batch/v1
+#kind: Job
+#metadata:
+#  name: playwright-shard3
+#spec:
+#  template:
+#    spec:
+#      containers:
+#        - name: playwright
+#          image: localhost/playwright-tests:v2
+#          imagePullPolicy: IfNotPresent
+#          env:
+#            - name: SHARD_INDEX
+#              value: "2"
+#            - name: SHARD_TOTAL
+#              value: "3"
+#          command: ["sh", "-c"]
+#          args:
+#            - |
+#              echo "Running shard ${SHARD_INDEX}/${SHARD_TOTAL}"
+#              mvn test -DshardIndex=${SHARD_INDEX} -DshardTotal=${SHARD_TOTAL} -Dgroups="${TEST_TAGS}"
+#      restartPolicy: Never

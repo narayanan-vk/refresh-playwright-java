@@ -71,6 +71,37 @@
             <version>${aspectj.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.epam.reportportal</groupId>
+            <artifactId>agent-java-junit5</artifactId>
+            <version>5.3.5</version>
+        </dependency>
+        <dependency>
+            <groupId>com.epam.reportportal</groupId>
+            <artifactId>logger-java-logback</artifactId>
+            <version>5.2.2</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.5.13</version>
+        </dependency>
+        <dependency>
+            <groupId>com.epam.reportportal</groupId>
+            <artifactId>logger-java-log4j</artifactId>
+            <version>5.2.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.17.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.17.1</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -95,17 +126,26 @@
                     <version>3.3.0</version>
                     <configuration>
                         <useFile>true</useFile>
+                        <reportFormat>plain</reportFormat>
+                        <trimStackTrace>false</trimStackTrace>
+                        <redirectTestOutputToFile>false</redirectTestOutputToFile>
                         <groups>${TEST_TAGS}</groups>
                         <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
                         <argLine>
                             -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
                         </argLine>
-                        <systemProperties>
+                        <systemPropertyVariables>
                             <property>
                                 <name>allure.results.directory</name>
                                 <value>${project.build.directory}/allure-results</value>
                             </property>
-                        </systemProperties>
+                        </systemPropertyVariables>
+                        <properties>
+                            <configurationParameters>
+                                junit.platform.execution.discovery.postDiscoveryFilterAutoRegistrationEnabled=true
+                                junit.jupiter.extensions.autodetection.enabled = true
+                            </configurationParameters>
+                        </properties>
                     </configuration>
                     <dependencies>
                         <dependency>

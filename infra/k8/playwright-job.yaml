@@ -1,0 +1,32 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: playwright-runner
+spec:
+  template:
+    spec:
+      containers:
+        - name: playwright
+          image: localhost/playwright-tests:local
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: TEST_BROWSER
+              value: "chromium"
+            - name: TEST_TAGS
+              value: "Smoke"
+            - name: TEST_HEADLESS
+              value: "true"
+            - name: TEST_TRACE
+              value: "RETAIN_ON_FAILURE"
+            - name: TEST_CI
+              value: "true"
+          volumeMounts:
+            - name: test-results
+              mountPath: /app/target
+      restartPolicy: Never
+      volumes:
+        - name: test-results
+          hostPath:
+            path: /tmp/test-results
+            type: DirectoryOrCreate
+  backoffLimit: 1
