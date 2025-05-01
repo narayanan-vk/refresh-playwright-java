@@ -4,6 +4,9 @@
 
 [![pages-build-deployment](https://github.com/narayanan-vk/refresh-playwright-java/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/narayanan-vk/refresh-playwright-java/actions/workflows/pages/pages-build-deployment)
 
+## Parallel execution
+Refer to [Parallel execution using GitHub Actions](/docs/PARALLEL-EXECUTION.md) to know more.
+
 ## View trace
 
 ```
@@ -69,7 +72,7 @@ kubectl delete jobs playwright-runner
 
 ## Reporting
 
-### Report portal
+### Report portal [Deprecated]
 
 Setup report portal in JUnit5 following this guide
 > https://github.com/reportportal/agent-java-junit5#readme

@@ -28,7 +28,7 @@ public class ScreenShootOnFailureExtension implements InvocationInterceptor {
             Page page = threadLocalPage.get();
             byte[] screenshot = page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("screenshot.png")).setFullPage(true));
             LOGGER.error(
-                    "RP_MESSAGE#BASE64#{}#{}",
+                    "MESSAGE#BASE64#{}#{}",
                     Base64.getEncoder().encodeToString(screenshot),
                     "Error screenshot"
             );
