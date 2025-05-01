@@ -33,12 +33,12 @@ jobs:
       options: --user 1001
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '22'
-      - name: Build & Install
-        run: mvn -B install -D skipTests --no-transfer-progress
+#      - uses: actions/setup-java@v3
+#        with:
+#          distribution: 'temurin'
+#          java-version: '22'
+#      - name: Build & Install
+#        run: mvn -B install -D skipTests --no-transfer-progress
       - name: Run tests
         run: mvn test -Dgroups="${TEST_TAGS}"
         env:
@@ -47,20 +47,45 @@ jobs:
           TEST_CI: "true"
           TEST_TAGS: ${{ github.event.inputs.tags }}
           TEST_TRACE: ${{ github.event.inputs.trace }}
-      - name: Generate Allure Report
-        run: mvn allure:report
+
+      - name: Load test report history
+        uses: actions/checkout@v3
         if: always()
-      - name: Upload Allure Results
-        if: always()
-        uses: actions/upload-artifact@v4
+        continue-on-error: true
         with:
-          name: allure-results
-          path: target/allure-results/
-          retention-days: 30
-      - name: Upload Allure Report
+          ref: gh-pages
+          path: gh-pages
+
+      - name: Build test report
+        uses: simple-elf/allure-report-action@v1.7
         if: always()
-        uses: actions/upload-artifact@v4
         with:
-          name: allure-report
-          path: target/site/allure-maven-plugin/
-          retention-days: 30
+          gh_pages: gh-pages
+          allure_history: allure-history
+          allure_results: build/allure-results
+
+      - name: Publish test report
+        uses: peaceiris/actions-gh-pages@v3
+        if: always()
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: allure-history
+
+#      - name: Generate Allure Report
+#        run: mvn allure:report
+#        if: always()
+#      - name: Upload Allure Results
+#        if: always()
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: allure-results
+#          path: target/allure-results/
+#          retention-days: 30
+#      - name: Upload Allure Report
+#        if: always()
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: allure-report
+#          path: target/site/allure-maven-plugin/
+#          retention-days: 30
