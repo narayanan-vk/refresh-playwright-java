@@ -27,11 +27,7 @@ spec:
               value: "true"
           command: ["sh", "-c"]
           args:
-            - |
-              # Create reportportal.properties file from secret
-              cp /etc/reportportal/reportportal.properties /app/src/test/resources/
-              echo "rp.launch=Playwright-Shard-${SHARD_INDEX}" >> /app/src/test/resources/reportportal.properties
-              
+            - |             
               
               echo "Running shard ${SHARD_INDEX}/${SHARD_TOTAL}"
               mvn test -DshardIndex=${SHARD_INDEX} -DshardTotal=${SHARD_TOTAL} -Dgroups="${TEST_TAGS}"
@@ -78,11 +74,6 @@ spec:
 #          command: ["sh", "-c"]
 #          args:
 #            - |
-#              # Create reportportal.properties file from secret
-#              cp /etc/reportportal/reportportal.properties /app/src/test/resources/
-#              echo "rp.launch=Playwright-Shard-${SHARD_INDEX}" >> /app/src/test/resources/reportportal.properties
-#
-#
 #              echo "Running shard ${SHARD_INDEX}/${SHARD_TOTAL}"
 #              mvn test -DshardIndex=${SHARD_INDEX} -DshardTotal=${SHARD_TOTAL} -Dgroups="${TEST_TAGS}"
 #

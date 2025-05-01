@@ -41,13 +41,11 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <scope>test</scope>
         </dependency>
         <!-- Optionally: parameterized tests support -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.microsoft.playwright</groupId>
@@ -70,26 +68,6 @@
             <artifactId>aspectjweaver</artifactId>
             <version>${aspectj.version}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.epam.reportportal</groupId>
-            <artifactId>agent-java-junit5</artifactId>
-            <version>5.3.5</version>
-        </dependency>
-        <dependency>
-            <groupId>com.epam.reportportal</groupId>
-            <artifactId>logger-java-logback</artifactId>
-            <version>5.2.2</version>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>1.5.13</version>
-        </dependency>
-        <dependency>
-            <groupId>com.epam.reportportal</groupId>
-            <artifactId>logger-java-log4j</artifactId>
-            <version>5.2.2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -134,12 +112,12 @@
                         <argLine>
                             -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
                         </argLine>
-                        <systemPropertyVariables>
-                            <property>
-                                <name>allure.results.directory</name>
-                                <value>${project.build.directory}/allure-results</value>
-                            </property>
-                        </systemPropertyVariables>
+<!--                        <systemPropertyVariables>-->
+<!--                            <property>-->
+<!--                                <name>allure.results.directory</name>-->
+<!--                                <value>${project.build.directory}/allure-results</value>-->
+<!--                            </property>-->
+<!--                        </systemPropertyVariables>-->
                         <properties>
                             <configurationParameters>
                                 junit.platform.execution.discovery.postDiscoveryFilterAutoRegistrationEnabled=true
@@ -180,11 +158,11 @@
                     <groupId>io.qameta.allure</groupId>
                     <artifactId>allure-maven</artifactId>
                     <version>2.15.2</version>
-                    <configuration>
-                        <reportVersion>${allure.version}</reportVersion>
-                        <resultsDirectory>${project.build.directory}/allure-results</resultsDirectory>
-                        <reportDirectory>${project.build.directory}/site/allure-maven-plugin</reportDirectory>
-                    </configuration>
+<!--                    <configuration>-->
+<!--                        <reportVersion>${allure.version}</reportVersion>-->
+<!--                        <resultsDirectory>${project.build.directory}/allure-results</resultsDirectory>-->
+<!--                        <reportDirectory>${project.build.directory}/site/allure-maven-plugin</reportDirectory>-->
+<!--                    </configuration>-->
                 </plugin>
             </plugins>
         </pluginManagement>

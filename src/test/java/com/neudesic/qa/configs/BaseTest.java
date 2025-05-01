@@ -1,6 +1,5 @@
 package com.neudesic.qa.configs;
 
-import com.epam.reportportal.junit5.ReportPortalExtension;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.junit.UsePlaywright;
 import com.neudesic.qa.core.ScreenShootOnFailureExtension;
@@ -8,7 +7,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-@ExtendWith(ReportPortalExtension.class)
 @ExtendWith(ScreenShootOnFailureExtension.class)
 @UsePlaywright(ExecutionOptions.CustomOptions.class)
 public abstract class BaseTest {
