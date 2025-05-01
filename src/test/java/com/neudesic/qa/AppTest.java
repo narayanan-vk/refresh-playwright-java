@@ -36,7 +36,7 @@ public class AppTest extends BaseTest {
         LOGGER.info("Add a new todo.");
         getPage().getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("What needs to be done?")).fill("Check if this todo is added");
         getPage().getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("What needs to be done?")).press("Enter");
-        assertThat(getPage().getByTestId("todo-title")).containsText("Check if another todo is added");
+        assertThat(getPage().getByTestId("todo-title")).containsText("Check if this todo is added");
         assertThat(getPage().getByTestId("todo-title")).matchesAriaSnapshot("- text: Check if this todo is added");
         LOGGER.info("TODO added successfully.");
     }
