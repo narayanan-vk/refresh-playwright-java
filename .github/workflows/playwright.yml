@@ -63,7 +63,7 @@ jobs:
       - name: Download test results
         uses: actions/download-artifact@v4
         with:
-          name: allure-results
+          name: allure-report
           path: target/allure-results
 
       - name: Load test report history
