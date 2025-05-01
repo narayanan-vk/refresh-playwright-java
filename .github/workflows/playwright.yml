@@ -106,5 +106,5 @@ jobs:
           authToken: ${{secrets.GITHUB_TOKEN}}
           context: 'Test report'
           state: 'success'
-          sha: ${{ github.event.pull_request.head.sha }}
+          sha: ${{ github.sha }}
           target_url: narayanan-vk.github.io/refresh-playwright-java/${{ github.run_number }}/
