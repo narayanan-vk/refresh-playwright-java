@@ -10,6 +10,7 @@ import io.qameta.allure.Feature;
 import io.qameta.allure.Story;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -26,6 +27,7 @@ public class AppTest extends BaseTest {
     @Tag("P1")
     @Tag("Smoke")
     @Tag("Regression")
+    @DisplayName("Should add TODO items")
     @Test
     void shouldCheckAddTodo() {
         getPage().navigate("/todomvc/#/");
@@ -34,7 +36,7 @@ public class AppTest extends BaseTest {
         LOGGER.info("Add a new todo.");
         getPage().getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("What needs to be done?")).fill("Check if this todo is added");
         getPage().getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("What needs to be done?")).press("Enter");
-        assertThat(getPage().getByTestId("todo-title")).containsText("Check if this todo is added");
+        assertThat(getPage().getByTestId("todo-title")).containsText("Check if another todo is added");
         assertThat(getPage().getByTestId("todo-title")).matchesAriaSnapshot("- text: Check if this todo is added");
         LOGGER.info("TODO added successfully.");
     }
@@ -46,6 +48,7 @@ public class AppTest extends BaseTest {
     @Tag("P1")
     @Tag("Smoke")
     @Tag("Regression")
+    @DisplayName("Should delete TODO items")
     @Test
     void shouldCheckDeleteTodo() {
         getPage().navigate("/todomvc/#/");
