@@ -52,6 +52,7 @@ jobs:
           name: allure-report
           path: target/allure-results/
           retention-days: 7
+
       - name: Check overall test run result
         if: steps.run_tests.outcome == 'failure'
         run: exit 1
@@ -86,7 +87,7 @@ jobs:
         with:
           gh_pages: gh-pages
           allure_history: allure-history
-          allure_results: allure-results
+          allure_results: allure-report
 
       - name: Publish test report
         uses: peaceiris/actions-gh-pages@v3
@@ -96,40 +97,3 @@ jobs:
           publish_branch: gh-pages
           publish_dir: allure-history
           force_orphan: true
-
-
-#      - name: Load test report history
-#        uses: actions/checkout@v4
-#        if: always()
-#        continue-on-error: true
-#        with:
-#          ref: gh-pages
-#          path: gh-pages
-#
-#      - name: Build test report
-#        uses: simple-elf/allure-report-action@v1.7
-#        if: always()
-#        with:
-#          gh_pages: gh-pages
-#          allure_history: allure-history
-#          allure_results: target/allure-results
-#
-#      - name: Publish test report
-#        uses: peaceiris/actions-gh-pages@v3
-#        if: always()
-#        with:
-#          github_token: ${{ secrets.GITHUB_TOKEN }}
-#          publish_branch: gh-pages
-#          publish_dir: allure-history
-
-#      - name: Generate Allure Report
-#        run: mvn allure:report
-#        if: always()
-#      - name: Upload Allure Results
-#        if: always()
-#        uses: actions/upload-artifact@v4
-#        with:
-#          name: allure-results
-#          path: target/allure-results/
-#          retention-days: 30
-
