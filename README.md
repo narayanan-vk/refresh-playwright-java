@@ -2,6 +2,8 @@
 
 [![Playwright Tests](https://github.com/narayanan-vk/refresh-playwright-java/actions/workflows/playwright.yml/badge.svg?branch=main)](https://github.com/narayanan-vk/refresh-playwright-java/actions/workflows/playwright.yml)
 
+[![pages-build-deployment](https://github.com/narayanan-vk/refresh-playwright-java/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/narayanan-vk/refresh-playwright-java/actions/workflows/pages/pages-build-deployment)
+
 ## View trace
 
 ```

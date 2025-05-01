@@ -26,8 +26,13 @@ on:
         options: [ ON, OFF, RETAIN_ON_FAILURE ]
 jobs:
   run-playwright-tests:
-    name: 'Playwright Tests'
+    name: 'Playwright Tests - (Shard ${{ matrix.shardIndex }} of ${{ matrix.shardTotal }})'
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shardIndex: [0, 1, 2]
+        shartTotal: [3]
     container:
       image: mcr.microsoft.com/playwright/java:v1.51.0-noble
       options: --user 1001
@@ -37,7 +42,7 @@ jobs:
       - name: Run tests
         id: run_tests
         continue-on-error: true
-        run: mvn test -Dgroups="${TEST_TAGS}"
+        run: mvn test -DshardIndex=${{ matrix.shardIndex }} -DshardTotal=${{ matrix.shardTotal }} -Dgroups="${TEST_TAGS}"
         env:
           TEST_BROWSER: ${{ github.event.inputs.browser }}
           TEST_HEADLESS: "true"
@@ -49,13 +54,43 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-results
+          name: allure-results-shard-${{ matrix.shardIndex }}
           path: target/allure-results/
           retention-days: 7
 
       - name: Check overall test run result
         if: steps.run_tests.outcome == 'failure'
         run: exit 1
+
+  merge-reports:
+    name: 'Merge Test Reports'
+    needs: run-playwright-tests
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create merged results directory
+        run: mkdir -p target/allure-results
+
+      - name: Download all test results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: allure-results-shard-*
+          path: downloaded-results
+          merge-multiple: true
+
+      - name: Merge results
+        run: |
+          find downloaded-results -type f -name "*.json" -o -name "*.xml" | xargs -I{} cp {} target/allure-results/
+
+      - name: Upload merged results
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results
+          path: target/allure-results/
+          retention-days: 7
+
 
   publish-allure-report:
     name: 'Publish Allure Report'
@@ -99,9 +134,14 @@ jobs:
           publish_branch: gh-pages
           publish_dir: allure-history
 
-      - name: Set report URL as output
+      - name: Set report URL as output, annotation and to job summary
+        if: always()
         id: set_url
         run: |
-              echo "report_url=https://narayanan-vk.github.io/refresh-playwright-java/${{ github.run_number }}/" >> $GITHUB_OUTPUT
-              echo "::notice title=Test Report Available::View the full test report at https://narayanan-vk.github.io/refresh-playwright-java/${{ github.run_number }}/"
+          REPORT_URL="https://narayanan-vk.github.io/refresh-playwright-java/${{ github.run_number }}/"
+          echo "report_url=$REPORT_URL" >> $GITHUB_OUTPUT
+          echo "::notice title=Test Report Available::View the full test report at $REPORT_URL"
+          echo "## 📊 Test Report" >> $GITHUB_STEP_SUMMARY
+          echo "📝 [View Full Test Report]($REPORT_URL)" >> $GITHUB_STEP_SUMMARY
+
 
