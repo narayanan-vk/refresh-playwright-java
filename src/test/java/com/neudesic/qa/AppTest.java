@@ -5,9 +5,7 @@ import com.microsoft.playwright.junit.UsePlaywright;
 import com.microsoft.playwright.options.AriaRole;
 import com.neudesic.qa.configs.BaseTest;
 import com.neudesic.qa.configs.ExecutionOptions;
-import io.qameta.allure.Epic;
-import io.qameta.allure.Feature;
-import io.qameta.allure.Story;
+import io.qameta.allure.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.DisplayName;
@@ -28,17 +26,26 @@ public class AppTest extends BaseTest {
     @Tag("Smoke")
     @Tag("Regression")
     @DisplayName("Should add TODO items")
+    @Owner("NVK")
+    @Severity(SeverityLevel.CRITICAL)
+    @Description("This test attempts to add a TODO item and then verify that the added item is saved and visible on the page.")
     @Test
     void shouldCheckAddTodo() {
         getPage().navigate("/todomvc/#/");
         LOGGER.info("Navigated to TODO MVC page.");
-        getPage().getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("What needs to be done?")).click();
-        LOGGER.info("Add a new todo.");
-        getPage().getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("What needs to be done?")).fill("Check if this todo is added");
-        getPage().getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("What needs to be done?")).press("Enter");
-        assertThat(getPage().getByTestId("todo-title")).containsText("Check if this todo is added");
+        String todoItemName = "Check if this todo is added";
+        addTodoItem(todoItemName);
+        assertThat(getPage().getByTestId("todo-title")).containsText(todoItemName);
         assertThat(getPage().getByTestId("todo-title")).matchesAriaSnapshot("- text: Check if this todo is added");
         LOGGER.info("TODO added successfully.");
+    }
+
+    @Step("Add TODO item")
+    void addTodoItem(String todoItemName){
+        getPage().getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("What needs to be done?")).click();
+        LOGGER.info("Add a new todo.");
+        getPage().getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("What needs to be done?")).fill(todoItemName);
+        getPage().getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("What needs to be done?")).press("Enter");
     }
 
     @Epic("Todo MVC UI")
@@ -48,15 +55,17 @@ public class AppTest extends BaseTest {
     @Tag("P1")
     @Tag("Smoke")
     @Tag("Regression")
+    @Severity(SeverityLevel.NORMAL)
+    @Owner("NVK")
     @DisplayName("Should delete TODO items")
+    @Description("This test attempts to add a TODO item and then delete that TODO item. Afterwards, the TODO item is verified to be hidden in the page.")
     @Test
     void shouldCheckDeleteTodo() {
         getPage().navigate("/todomvc/#/");
-        getPage().getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("What needs to be done?")).click();
-        getPage().getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("What needs to be done?")).fill("Check if todo is created then deleted");
-        getPage().getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("What needs to be done?")).press("Enter");
-        assertThat(getPage().getByTestId("todo-title")).containsText("Check if todo is created then deleted");
-        getPage().getByTestId("todo-title").getByText("Check if todo is created then deleted").hover();
+        String todoItemName = "Check if todo is created then deleted";
+        addTodoItem(todoItemName);
+        assertThat(getPage().getByTestId("todo-title")).containsText(todoItemName);
+        getPage().getByTestId("todo-title").getByText(todoItemName).hover();
         getPage().getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Delete")).click();
         assertThat(getPage().getByTestId("todo-title")).isHidden();
         assertThat(getPage().getByText("This is just a demo of TodoMVC for testing, not the real TodoMVC app. todos")).isVisible();

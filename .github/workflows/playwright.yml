@@ -31,8 +31,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shardIndex: [0, 1, 2]
-        shardTotal: [3]
+        shardIndex: [0, 1, 2, 3]
+        shardTotal: [4]
     container:
       image: mcr.microsoft.com/playwright/java:v1.51.0-noble
       options: --user 1001
