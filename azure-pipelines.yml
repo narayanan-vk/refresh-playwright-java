@@ -83,35 +83,6 @@ jobs:
           TEST_TAGS: ${{ parameters.tags }}
           TEST_TRACE: ${{ parameters.trace }}
 
-      - task: PublishBuildArtifacts@1
-        displayName: 'Upload Allure Results'
-        condition: always()
-        inputs:
-          pathToPublish: 'target/allure-results'
-          artifactName: 'allure-results-shard-$(shardIndex)'
-
-  - job: MergeAndPublishAllure
-    displayName: 'Merge and Publish Allure Report'
-    dependsOn: RunTests
-    condition: always()
-    pool:
-      vmImage: 'ubuntu-latest'
-    steps:
-      - checkout: self
-
-      - script: mkdir -p target/allure-results
-        displayName: 'Create merged results directory'
-
-      - task: DownloadBuildArtifacts@0
-        displayName: 'Download Allure Results'
-        inputs:
-          artifactName: 'allure-results-shard-*'
-          downloadPath: 'downloaded-results'
-
-      - script: |
-          find downloaded-results -type f -name "*.json" -o -name "*.xml" | xargs -I{} cp {} target/allure-results/
-        displayName: 'Merge Allure Results'
-
       - task: PublishAllureReport@1
         displayName: 'Publish Allure Report'
         inputs:
