@@ -1,24 +1,120 @@
-# Maven
-# Build your Java project and run tests with Apache Maven.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/java
-
 trigger:
-- main
+  branches:
+    include:
+      - main
+      - master
 
-pool:
-  vmImage: ubuntu-latest
+pr:
+  branches:
+    include:
+      - main
+      - master
 
-steps:
-- task: Maven@3
-  inputs:
-    mavenPomFile: 'pom.xml'
-    publishJUnitResults: true
-    testResultsFiles: '**/surefire-reports/TEST-*.xml'
-    javaHomeOption: 'JDKVersion'
-    jdkVersionOption: '1.21'
-    mavenVersionOption: 'Default'
-    mavenOptions: '-Xmx3072m'
-    mavenAuthenticateFeed: false
-    effectivePomSkip: false
-    sonarQubeRunAnalysis: false
+parameters:
+  - name: browser
+    displayName: 'Browser to run tests on'
+    type: string
+    default: 'chromium'
+    values:
+      - chromium
+      - firefox
+      - webkit
+
+  - name: tags
+    displayName: 'Test tags to run'
+    type: string
+    default: 'UI'
+    values:
+      - UI
+      - Smoke
+      - Regression
+      - API
+      - Performance
+      - P1
+      - P2
+
+  - name: trace
+    displayName: 'Recording a trace'
+    type: string
+    default: 'RETAIN_ON_FAILURE'
+    values:
+      - ON
+      - OFF
+      - RETAIN_ON_FAILURE
+
+jobs:
+  - job: RunTests
+    displayName: 'Run Playwright Tests'
+    strategy:
+      matrix:
+        Shard0:
+          shardIndex: 0
+          shardTotal: 4
+        Shard1:
+          shardIndex: 1
+          shardTotal: 4
+        Shard2:
+          shardIndex: 2
+          shardTotal: 4
+        Shard3:
+          shardIndex: 3
+          shardTotal: 4
+    container: mcr.microsoft.com/playwright/java:v1.51.0-noble
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+      - checkout: self
+
+      - task: Maven@4
+        displayName: 'Run Maven Tests'
+        inputs:
+          mavenPomFile: 'pom.xml'
+          goals: 'test'
+          options: >
+            -DshardIndex=$(shardIndex)
+            -DshardTotal=$(shardTotal)
+            -Dgroups=$(tags)
+          publishJUnitResults: true
+          testResultsFiles: '**/surefire-reports/TEST-*.xml'
+        env:
+          TEST_BROWSER: ${{ parameters.browser }}
+          TEST_HEADLESS: "true"
+          TEST_CI: "true"
+          TEST_TAGS: ${{ parameters.tags }}
+          TEST_TRACE: ${{ parameters.trace }}
+
+      - task: PublishBuildArtifacts@1
+        displayName: 'Upload Allure Results'
+        condition: always()
+        inputs:
+          pathToPublish: 'target/allure-results'
+          artifactName: 'allure-results-shard-$(shardIndex)'
+
+  - job: MergeAndPublishAllure
+    displayName: 'Merge and Publish Allure Report'
+    dependsOn: RunTests
+    condition: always()
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+      - checkout: self
+
+      - script: mkdir -p target/allure-results
+        displayName: 'Create merged results directory'
+
+      - task: DownloadBuildArtifacts@0
+        displayName: 'Download Allure Results'
+        inputs:
+          artifactName: 'allure-results-shard-*'
+          downloadPath: 'downloaded-results'
+
+      - script: |
+          find downloaded-results -type f -name "*.json" -o -name "*.xml" | xargs -I{} cp {} target/allure-results/
+        displayName: 'Merge Allure Results'
+
+      - task: PublishAllureReport@1
+        displayName: 'Publish Allure Report'
+        inputs:
+          allureVersion: '2.27.0'
+          testResultsDir: 'target/allure-results'
+          reportName: 'Refresh Java with Playwright'
