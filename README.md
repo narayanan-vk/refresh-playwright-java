@@ -4,6 +4,8 @@
 
 [![pages-build-deployment](https://github.com/narayanan-vk/refresh-playwright-java/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/narayanan-vk/refresh-playwright-java/actions/workflows/pages/pages-build-deployment)
 
+[![Build Status](https://dev.azure.com/NVKTestsStuff/JavaTestFramework/_apis/build/status%2Fnarayanan-vk.refresh-playwright-java?branchName=main)](https://dev.azure.com/NVKTestsStuff/JavaTestFramework/_apis/build/status%2Fnarayanan-vk.refresh-playwright-java?branchName=main)
+
 ## Parallel execution
 Refer to [Parallel execution using GitHub Actions](/docs/PARALLEL-EXECUTION.md) to know more.
 

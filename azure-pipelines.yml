@@ -88,4 +88,4 @@ jobs:
         inputs:
           allureVersion: '2.27.0'
           testResultsDir: 'target/allure-results'
-          reportName: 'Refresh Java with Playwright'
+          reportName: 'Report from shard - $(shardIndex)'

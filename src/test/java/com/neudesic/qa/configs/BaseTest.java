@@ -12,26 +12,24 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @ExtendWith(ScreenShootOnFailureExtension.class)
 @UsePlaywright(ExecutionOptions.CustomOptions.class)
 public abstract class BaseTest {
-    protected Page page;
-    private static final ThreadLocal<Page> threadLocalPage = new ThreadLocal<>();
+    private Page page;
     private static final Logger LOGGER = LogManager.getLogger(BaseTest.class);
 
 
     @BeforeEach
     void setupTests(Page page) {
         LOGGER.info("----------- test start => {}", Thread.currentThread().getName());
-        threadLocalPage.set(page);
         this.page = page;
         ScreenShootOnFailureExtension.setPage(page);
     }
 
     @AfterEach
     void cleanupTests() {
-        threadLocalPage.remove();
+        this.page.close();
         LOGGER.info("----------- test end => {}", Thread.currentThread().getName());
     }
 
     protected Page getPage() {
-        return threadLocalPage.get();
+        return this.page;
     }
 }
